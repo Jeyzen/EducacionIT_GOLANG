@@ -1,0 +1,5 @@
+Hacer sorteo de "quini 6"(como cualquier loteria) con lo aprendido en clase
+
+
+- 6 numeros tiene mostrar entre 00 y 45
+
