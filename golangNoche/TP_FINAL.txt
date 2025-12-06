@@ -1,0 +1,136 @@
+PROYECTO INTEGRADOR – HAMBURGUESERÍA IT
+Lenguaje: Go (Golang)
+Persistencia: Base de Datos (MySQL o SQLite)
+Integración externa: API del dólar
+Interfaz: Consola
+
+INTRODUCCIÓN
+Una hamburguesería desea automatizar su sistema de pedidos y registro de turnos.
+Debes desarrollar una aplicación de consola en Go que permita:
+– Registrar ventas en base de datos.
+– Registrar ingresos y salidas de encargados.
+– Calcular totales, vuelto y control de turnos.
+– Convertir precios de USD a ARS consultando una API real del dólar.
+NO debe usarse ningún archivo TXT. Toda la persistencia es con SQL.
+
+------------------------------------------------------
+REQUISITOS GENERALES
+------------------------------------------------------
+1. Al iniciar:
+   "Bienvenido a Hamburguesas IT"
+   "Ingrese su nombre encargad@:"
+
+2. Una vez ingresado el encargado:
+   1) Ingreso nuevo pedido
+   2) Cambio de turno
+   3) Apagar sistema
+
+3. El menú se repite hasta elegir la opción 3.
+
+4. El programa no debe detenerse ante errores y debe validarse la entrada.
+
+------------------------------------------------------
+API DEL DÓLAR (OBLIGATORIA)
+------------------------------------------------------
+Antes de calcular el total a cobrar en moneda local,
+el programa debe consultar una API pública del dólar.
+
+Ejemplo sugerido:
+   GET https://dolarapi.com/v1/dolares/oficial
+
+El JSON contiene:
+   {
+      "moneda": "USD",
+      "casa": "oficial",
+      "nombre": "Oficial",
+      "compra": 1430,
+      "venta": 1480,
+      "fechaActualizacion": "2025-12-03T17:00:00.000Z"
+   }
+
+El sistema debe tomar el valor “venta” para convertir los montos.
+Los precios del menú están expresados en USD.  
+El total en ARS = totalUSD * cotizaciónVenta.
+
+El vuelto también debe calcularse y mostrarse en ARS.
+
+------------------------------------------------------
+FUNCIONALIDAD: NUEVO PEDIDO
+------------------------------------------------------
+Al seleccionar opción 1 se solicita:
+– Nombre del cliente
+– Cantidad Combo Simple
+– Cantidad Combo Doble
+– Cantidad Combo Triple
+– Cantidad Flurby
+
+Precios en USD:
+Combo Simple = 5 USD
+Combo Doble  = 6 USD
+Combo Triple = 7 USD
+Flurby       = 2 USD
+
+Secuencia:
+– Calcular total en USD.
+– Consultar API del dólar y obtener cotización.
+– Convertir total a ARS.
+– Pedir con cuánto abona el cliente (en ARS).
+– Mostrar vuelto (en ARS).
+– Preguntar: “¿Confirma pedido? (Y/N):”
+
+Si confirma → se guarda la venta en la base.
+Si no confirma → no guardar.
+
+------------------------------------------------------
+FUNCIONALIDAD: CAMBIO DE TURNO
+------------------------------------------------------
+Opción 2:
+– Registrar salida del encargad@ actual (evento OUT).
+– Registrar la caja total acumulada del turno (suma de todas sus ventas).
+– Solicitar nuevo encargad@.
+– Registrar evento IN en la base de datos.
+
+------------------------------------------------------
+FUNCIONALIDAD: APAGAR SISTEMA
+------------------------------------------------------
+Opción 3:
+– Registrar salida (OUT) del encargad@.
+– Finalizar la aplicación.
+
+------------------------------------------------------
+BASE DE DATOS (OBLIGATORIA)
+------------------------------------------------------
+El proyecto debe usar MySQL o SQLite.
+Debe contener dos tablas: ventas y registro.
+
+TABLA: ventas
+Campos:
+– id (INTEGER PRIMARY KEY AUTOINCREMENT)
+– cliente (TEXT)
+– fecha (TEXT o DATETIME)
+– comboS (INTEGER)
+– comboD (INTEGER)
+– comboT (INTEGER)
+– flurby (INTEGER)
+– totalUSD (REAL)
+– totalARS (REAL)
+– cotizacion (REAL)  // cotización del dólar usada en ese momento
+
+TABLA: registro
+Campos:
+– id (INTEGER PRIMARY KEY AUTOINCREMENT)
+– encargado (TEXT)
+– fecha (TEXT o DATETIME)
+– evento (TEXT)  // “IN” o “OUT”
+– caja (REAL)    // total en ARS al cerrar turno (solo para OUT)
+
+------------------------------------------------------
+CONDICIONES FINALES
+------------------------------------------------------
+– Manejar todos los errores sin cortar el programa.
+– Usar únicamente base de datos y consultas SQL.
+– Usar la API del dólar antes de cada venta.
+– El programa debe correr completamente por consola.
+– Limpiar la pantalla es opcional.
+
+FIN DEL ENUNCIADO
